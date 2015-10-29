@@ -54,3 +54,7 @@ x86_64: dist
 osx: dist
 	$(CC) -arch i386 -arch x86_64 $(CFLAGS) -Wno-deprecated-declarations -Wno-unused-variable $(OPTS) $(SRCS) -o dist/$(DISTNAME).$@
 	$(STRIP) dist/$(DISTNAME).$@
+
+haiku: dist
+	$(CC) -m32 $(CFLAGS) -Wno-unused-variable $(LDFLAGS) -lnetwork -lbsd $(OPTS) $(SRCS) -o dist/$(DISTNAME).$@
+	$(STRIP) dist/$(DISTNAME).$@

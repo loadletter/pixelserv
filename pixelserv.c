@@ -20,7 +20,11 @@
 
 #define DEFAULT_TIMEOUT 10      // default timeout for select() calls, in seconds
 
+#ifndef __HAIKU__
 #define DEFAULT_USER "nobody"   // nobody used by dnsmasq
+#else
+#define DEFAULT_USER "user"
+#endif
 
 #define MAX_PORTS 10
 
@@ -44,6 +48,11 @@
 #include <syslog.h>
 #include <pwd.h>                // for getpwnam
 #include <ctype.h>              // isdigit() & tolower()
+
+#ifdef __HAIKU__
+#include <sys/select.h>
+//#include <bsd/stdlib.h>
+#endif
 
 #include "compat.h"
 
@@ -774,7 +783,7 @@ static unsigned char httpnull_ico[] =
 			exit(EXIT_FAILURE);
 		}
 		if ((setsockopt(sockets[i], SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != OK)
-#ifndef __APPLE__
+#if !(defined(__APPLE__) || defined (__HAIKU__))
 				/* only use selected i/f */
 				|| (use_if && (setsockopt(sockets[i], SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname)) != OK))
 				/* send short packets straight away */
